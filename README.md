@@ -1,8 +1,8 @@
 # DinePulse AI - Full-Stack SaaS Restaurant Operations & Dining Platform
 
-> **Team Name**: DinePulse Innovations  
+> **Team Name**: malyalamounika051  
 > **Tech Stack**: Next.js 14 (App Router), React 18, TypeScript, Tailwind CSS, Recharts, Lucide Icons, Gemini AI API (@google/genai)  
-> **Hosted Link**: `http://localhost:3000` (Local Dev) / Public Deployment Ready  
+> **Hosted Link**: [DinePulse Web Application (Local Dev)](http://localhost:3000) / Public Deployment Ready  
 
 ---
 

@@ -97,25 +97,9 @@ export default function DashboardPage() {
     } catch (e) {
       setAiMessages(prev => [...prev, {
         sender: 'ai',
-        text: `## 📊 DinePulse Operations Intelligence
-
-🚨 **Critical Alerts**
-• Black Truffle Oil stock level at **critical threshold** (1.1L).
-• Kitchen ticket velocity on **Table 4** delayed (>20 mins).
-
-📈 **Key Insights**
-• Today's gross sales reached **$4,850.20** (**+14.2%** vs last week).
-• A5 Wagyu Ribeye generated **38%** of tonight's gross margin.
-
-💡 **Recommendations**
-• Trigger automated supplier restock for truffle oil and wagyu.
-• Shift auxiliary server to assist VIP Lounge table turnover.
-
-⏳ **Predictions**
-• Wagyu stock expected to deplete in **1.5 days**.
-• Occupancy projected to reach **90%** during peak rush.
-
-────────────────────────`
+        text: `### 📊 Operational Recommendation
+- **Stock Depletion**: Black Truffle Oil is at critical level (1.1L). Recommended restock trigger sent to supplier.
+- **Profitability**: A5 Wagyu Ribeye revenue contributes 38% of tonight's gross margin.`
       }]);
     } finally {
       setIsAiThinking(false);
@@ -567,7 +551,7 @@ export default function DashboardPage() {
               {aiMessages.map((msg, i) => (
                 <div
                   key={i}
-                  className={`p-3.5 rounded-2xl max-w-2xl whitespace-pre-wrap ${
+                  className={`p-3.5 rounded-2xl max-w-2xl ${
                     msg.sender === 'user'
                       ? 'bg-purple-600 text-white ml-auto font-medium'
                       : 'bg-slate-900 text-slate-200 border border-slate-800 leading-relaxed'

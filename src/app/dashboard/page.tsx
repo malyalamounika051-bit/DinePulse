@@ -5,7 +5,7 @@ import RoleSwitcherBar from '@/components/RoleSwitcherBar';
 import Navbar from '@/components/Navbar';
 import AuthModal from '@/components/AuthModal';
 import BillSplitter from '@/components/BillSplitter';
-import { Role, User, Table, InventoryItem, Order, MenuItem } from '@/types';
+import { Role, Table, InventoryItem, Order, MenuItem } from '@/types';
 import { initialTables, initialInventoryItems, initialOrders, initialMenuItems, initialStaffMembers, initialCRMGuests, hourlySalesData } from '@/lib/db';
 import {
   LayoutDashboard,
@@ -31,8 +31,6 @@ import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, 
 
 export default function DashboardPage() {
   const [role, setRole] = useState<Role>('manager');
-  const [user, setUser] = useState<User | null>(null);
-  const [isAuthOpen, setIsAuthOpen] = useState(false);
 
   const [activeTab, setActiveTab] = useState<'overview' | 'floor' | 'inventory' | 'staff' | 'analytics' | 'copilot'>('overview');
 
@@ -107,30 +105,30 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="min-h-screen pb-16 text-slate-100 font-sans">
-      <RoleSwitcherBar
-        currentRole={role}
-        onRoleChange={(r) => {
-          setRole(r);
-          if (r === 'customer') window.location.href = '/customer/menu';
-          if (r === 'kitchen') window.location.href = '/kitchen';
-        }}
-      />
-      <Navbar
-        user={user}
-        currentRole={role}
-        onOpenAuth={() => setIsAuthOpen(true)}
-        onLogout={() => setUser(null)}
-      />
+    <div className="min-h-screen pb-16 text-slate-100 font-sans pt-[116px] relative z-10">
+      <AuthModal />
+
+      {/* Fixed top header wrapper preventing overlapping */}
+      <div className="fixed top-0 left-0 right-0 z-50 flex flex-col shadow-2xl">
+        <RoleSwitcherBar
+          currentRole={role}
+          onRoleChange={(r) => {
+            setRole(r);
+            if (r === 'customer') window.location.href = '/customer/menu';
+            if (r === 'kitchen') window.location.href = '/kitchen';
+          }}
+        />
+        <Navbar />
+      </div>
 
       <main className="max-w-7xl mx-auto px-4 md:px-8 py-6">
         
         {/* Dashboard Top Header & Tabs */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 glass-panel p-6 rounded-3xl mb-8 border border-purple-500/20">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 glass-panel p-6 rounded-3xl mb-8 war-shimmer" style={{ border: '1px solid rgba(139,26,46,0.4)' }}>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl md:text-3xl font-black text-white">Restaurant Operations Hub</h1>
-              <span className="bg-purple-950 text-purple-400 font-bold text-xs px-2.5 py-0.5 rounded border border-purple-800/40">
+              <h1 className="text-2xl md:text-3xl font-black" style={{ color: '#F5E6CE', fontFamily: 'Cinzel, serif' }}>Restaurant Operations Hub</h1>
+              <span className="font-bold text-xs px-2.5 py-0.5 rounded" style={{ background: 'rgba(240,180,41,0.10)', color: '#FFD45E', border: '1px solid rgba(240,180,41,0.35)', fontFamily: 'Cinzel, serif', fontSize: '10px' }}>
                 Gold & Platinum SaaS
               </span>
             </div>
@@ -140,14 +138,14 @@ export default function DashboardPage() {
           </div>
 
           {/* Navigation Tabs */}
-          <div className="flex items-center gap-1.5 overflow-x-auto bg-slate-950 p-1.5 rounded-2xl border border-slate-800 text-xs">
+          <div className="flex items-center gap-1.5 overflow-x-auto p-1.5 rounded-2xl text-xs" style={{ background: 'rgba(10,2,12,0.95)', border: '1px solid rgba(139,26,46,0.45)' }}>
             {[
-              { id: 'overview', label: 'Overview', icon: LayoutDashboard },
-              { id: 'floor', label: 'Floor Plan', icon: Grid },
-              { id: 'inventory', label: 'Inventory', icon: Box },
-              { id: 'staff', label: 'Staff & CRM', icon: Users },
-              { id: 'analytics', label: 'Analytics', icon: TrendingUp },
-              { id: 'copilot', label: 'AI Copilot', icon: Sparkles }
+              { id: 'overview',  label: 'Overview',    icon: LayoutDashboard },
+              { id: 'floor',     label: 'Floor Plan',  icon: Grid },
+              { id: 'inventory', label: 'Inventory',   icon: Box },
+              { id: 'staff',     label: 'Staff & CRM', icon: Users },
+              { id: 'analytics', label: 'Analytics',   icon: TrendingUp },
+              { id: 'copilot',   label: 'AI Copilot (Beta)', icon: Sparkles }
             ].map(tab => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -155,11 +153,11 @@ export default function DashboardPage() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-semibold transition whitespace-nowrap ${
-                    isActive
-                      ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md'
-                      : 'text-slate-400 hover:text-white hover:bg-slate-900'
-                  }`}
+                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-semibold transition whitespace-nowrap text-xs"
+                  style={isActive
+                    ? { background: 'linear-gradient(135deg,#8B1A2E,#E8823A)', color: '#FFD45E', boxShadow: '0 0 14px rgba(232,130,58,0.25)', fontFamily: 'Cinzel, serif', fontSize: '10px' }
+                    : { color: '#8A7060' }
+                  }
                 >
                   <Icon className="w-3.5 h-3.5" />
                   <span>{tab.label}</span>
@@ -511,10 +509,10 @@ export default function DashboardPage() {
 
         {/* 6. PLATINUM AI COPILOT TAB */}
         {activeTab === 'copilot' && (
-          <div className="glass-panel p-6 md:p-8 rounded-3xl border border-purple-500/30 space-y-6 animate-fade-in">
+          <div className="glass-panel p-6 md:p-8 rounded-3xl space-y-6 animate-fade-in" style={{ border: '1px solid rgba(139,26,46,0.45)' }}>
             <div className="flex items-center justify-between pb-4 border-b border-slate-800">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-purple-500/20 border border-purple-500/40 flex items-center justify-center text-purple-400">
+                <div className="w-10 h-10 rounded-2xl flex items-center justify-center" style={{ background: 'rgba(232,130,58,0.15)', border: '1px solid rgba(232,130,58,0.4)', color: '#E8823A' }}>
                   <Sparkles className="w-6 h-6" />
                 </div>
                 <div>
@@ -528,19 +526,22 @@ export default function DashboardPage() {
             <div className="flex flex-wrap gap-2 text-xs">
               <button
                 onClick={() => handleSendAiQuery("Which ingredients have highest waste risk today?")}
-                className="bg-purple-950/60 hover:bg-purple-900/80 text-purple-300 border border-purple-800/40 px-3 py-1.5 rounded-xl transition"
+                className="px-3 py-1.5 rounded-xl transition"
+                style={{ background: 'rgba(139,26,46,0.25)', color: '#F5E6CE', border: '1px solid rgba(139,26,46,0.5)', fontFamily: 'Cinzel, serif', fontSize: '10px' }}
               >
                 💡 Predict Inventory Waste
               </button>
               <button
                 onClick={() => handleSendAiQuery("Optimize Friday night staff shifts")}
-                className="bg-purple-950/60 hover:bg-purple-900/80 text-purple-300 border border-purple-800/40 px-3 py-1.5 rounded-xl transition"
+                className="px-3 py-1.5 rounded-xl transition"
+                style={{ background: 'rgba(139,26,46,0.25)', color: '#F5E6CE', border: '1px solid rgba(139,26,46,0.5)', fontFamily: 'Cinzel, serif', fontSize: '10px' }}
               >
                 👥 Optimize Staff Shifts
               </button>
               <button
                 onClick={() => handleSendAiQuery("Suggest happy hour pricing for appetizers")}
-                className="bg-purple-950/60 hover:bg-purple-900/80 text-purple-300 border border-purple-800/40 px-3 py-1.5 rounded-xl transition"
+                className="px-3 py-1.5 rounded-xl transition"
+                style={{ background: 'rgba(139,26,46,0.25)', color: '#F5E6CE', border: '1px solid rgba(139,26,46,0.5)', fontFamily: 'Cinzel, serif', fontSize: '10px' }}
               >
                 🏷️ Happy Hour Pricing Strategy
               </button>
@@ -579,7 +580,8 @@ export default function DashboardPage() {
               />
               <button
                 onClick={() => handleSendAiQuery()}
-                className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold px-5 rounded-xl shadow-lg shadow-purple-500/20 text-xs transition flex items-center gap-1.5"
+                className="bg-gradient-to-r from-crimson to-saffron hover:opacity-90 text-gold font-bold px-5 rounded-xl shadow-lg text-xs transition flex items-center gap-1.5 war-shimmer"
+                 style={{ background: 'linear-gradient(135deg,#8B1A2E,#E8823A)', color: '#FFD45E' }}
               >
                 <Send className="w-4 h-4" />
                 <span>Ask AI</span>
@@ -602,11 +604,6 @@ export default function DashboardPage() {
         />
       )}
 
-      <AuthModal
-        isOpen={isAuthOpen}
-        onClose={() => setIsAuthOpen(false)}
-        onLoginSuccess={(u) => setUser(u)}
-      />
     </div>
   );
 }

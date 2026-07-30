@@ -5,14 +5,15 @@ import RoleSwitcherBar from '@/components/RoleSwitcherBar';
 import Navbar from '@/components/Navbar';
 import AuthModal from '@/components/AuthModal';
 import BillSplitter from '@/components/BillSplitter';
-import { MenuItem, Order, Role, User } from '@/types';
+import { useAuth } from '@/context/AuthContext';
+import { MenuItem, Order, Role } from '@/types';
 import { initialMenuItems, initialOrders } from '@/lib/db';
 import { Sparkles, ShoppingBag, Flame, Clock, Filter, Plus, Minus, CheckCircle, Info, Heart, ArrowRight } from 'lucide-react';
 
 export default function CustomerMenuPage() {
+  const { user } = useAuth();
   const [role, setRole] = useState<Role>('customer');
-  const [user, setUser] = useState<User | null>(null);
-  const [isAuthOpen, setIsAuthOpen] = useState(false);
+
   const [selectedTable, setSelectedTable] = useState('t1');
   const [menuItems, setMenuItems] = useState<MenuItem[]>(initialMenuItems);
   const [activeCategory, setActiveCategory] = useState<string>('All');
@@ -111,23 +112,23 @@ export default function CustomerMenuPage() {
   };
 
   return (
-    <div className="min-h-screen pb-16 text-slate-100 font-sans">
-      <RoleSwitcherBar
-        currentRole={role}
-        onRoleChange={(r) => {
-          setRole(r);
-          if (r === 'kitchen') window.location.href = '/kitchen';
-          if (r === 'manager') window.location.href = '/dashboard';
-        }}
-        selectedTableId={selectedTable}
-        onTableChange={setSelectedTable}
-      />
-      <Navbar
-        user={user}
-        currentRole={role}
-        onOpenAuth={() => setIsAuthOpen(true)}
-        onLogout={() => setUser(null)}
-      />
+    <div className="min-h-screen pb-16 text-slate-100 font-sans pt-[116px] relative z-10">
+      <AuthModal />
+
+      {/* Fixed top header wrapper preventing overlapping */}
+      <div className="fixed top-0 left-0 right-0 z-50 flex flex-col shadow-2xl">
+        <RoleSwitcherBar
+          currentRole={role}
+          onRoleChange={(r) => {
+            setRole(r);
+            if (r === 'kitchen') window.location.href = '/kitchen';
+            if (r === 'manager') window.location.href = '/dashboard';
+          }}
+          selectedTableId={selectedTable}
+          onTableChange={setSelectedTable}
+        />
+        <Navbar />
+      </div>
 
       <main className="max-w-7xl mx-auto px-4 md:px-8 py-6">
         
@@ -160,7 +161,7 @@ export default function CustomerMenuPage() {
                 className="bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-lg shadow-orange-500/20 flex items-center justify-center gap-2 transition"
               >
                 <Sparkles className="w-4 h-4" />
-                <span>{isAiLoading ? 'Analyzing...' : 'AI Recommend'}</span>
+                <span>{isAiLoading ? 'Analyzing...' : 'AI Recommend (Beta)'}</span>
               </button>
             </div>
 
@@ -289,11 +290,11 @@ export default function CustomerMenuPage() {
             </div>
           </div>
 
-          {/* Right Column: Live Order Cart & Order Status Tracker */}
-          <div className="space-y-6">
+          {/* Right Column: Live Order Cart & Order Status Tracker (Unified Sidebar) */}
+          <div className="space-y-6 sticky top-[125px]">
             
             {/* Live Order Cart */}
-            <div className="glass-panel rounded-2xl p-5 border border-slate-800 sticky top-36">
+            <div className="glass-panel rounded-2xl p-5 border border-slate-800">
               <div className="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
                 <div className="flex items-center gap-2">
                   <ShoppingBag className="w-5 h-5 text-orange-400" />
@@ -421,12 +422,6 @@ export default function CustomerMenuPage() {
         />
       )}
 
-      {/* Auth Modal */}
-      <AuthModal
-        isOpen={isAuthOpen}
-        onClose={() => setIsAuthOpen(false)}
-        onLoginSuccess={(u) => setUser(u)}
-      />
     </div>
   );
 }

@@ -4,14 +4,12 @@ import React, { useState } from 'react';
 import RoleSwitcherBar from '@/components/RoleSwitcherBar';
 import Navbar from '@/components/Navbar';
 import AuthModal from '@/components/AuthModal';
-import { Reservation, Role, User } from '@/types';
+import { Reservation, Role } from '@/types';
 import { initialReservations } from '@/lib/db';
 import { Calendar, Clock, Users, CheckCircle2, Sparkles, MapPin, Phone, Mail, MessageSquare } from 'lucide-react';
 
 export default function ReservationsPage() {
   const [role, setRole] = useState<Role>('customer');
-  const [user, setUser] = useState<User | null>(null);
-  const [isAuthOpen, setIsAuthOpen] = useState(false);
 
   const [reservations, setReservations] = useState<Reservation[]>(initialReservations);
   const [name, setName] = useState('');
@@ -43,21 +41,21 @@ export default function ReservationsPage() {
   };
 
   return (
-    <div className="min-h-screen pb-16 text-slate-100 font-sans">
-      <RoleSwitcherBar
-        currentRole={role}
-        onRoleChange={(r) => {
-          setRole(r);
-          if (r === 'kitchen') window.location.href = '/kitchen';
-          if (r === 'manager') window.location.href = '/dashboard';
-        }}
-      />
-      <Navbar
-        user={user}
-        currentRole={role}
-        onOpenAuth={() => setIsAuthOpen(true)}
-        onLogout={() => setUser(null)}
-      />
+    <div className="min-h-screen pb-16 text-slate-100 font-sans pt-[116px] relative z-10">
+      <AuthModal />
+
+      {/* Fixed top header wrapper preventing overlapping */}
+      <div className="fixed top-0 left-0 right-0 z-50 flex flex-col shadow-2xl">
+        <RoleSwitcherBar
+          currentRole={role}
+          onRoleChange={(r) => {
+            setRole(r);
+            if (r === 'kitchen') window.location.href = '/kitchen';
+            if (r === 'manager') window.location.href = '/dashboard';
+          }}
+        />
+        <Navbar />
+      </div>
 
       <main className="max-w-7xl mx-auto px-4 md:px-8 py-6">
         
@@ -236,11 +234,6 @@ export default function ReservationsPage() {
         </div>
       </main>
 
-      <AuthModal
-        isOpen={isAuthOpen}
-        onClose={() => setIsAuthOpen(false)}
-        onLoginSuccess={(u) => setUser(u)}
-      />
     </div>
   );
 }

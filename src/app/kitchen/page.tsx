@@ -4,15 +4,13 @@ import React, { useState, useEffect } from 'react';
 import RoleSwitcherBar from '@/components/RoleSwitcherBar';
 import Navbar from '@/components/Navbar';
 import AuthModal from '@/components/AuthModal';
-import { Order, MenuItem, Role, User } from '@/types';
+import { Order, MenuItem, Role } from '@/types';
 import { initialOrders, initialMenuItems } from '@/lib/db';
 import { ChefHat, Clock, CheckCircle2, AlertCircle, UtensilsCrossed, ArrowRight, RefreshCw, Flame, Volume2 } from 'lucide-react';
 
 export default function KitchenKDSPage() {
   const [role, setRole] = useState<Role>('kitchen');
-  const [user, setUser] = useState<User | null>(null);
-  const [isAuthOpen, setIsAuthOpen] = useState(false);
-  
+
   const [orders, setOrders] = useState<Order[]>(initialOrders);
   const [menuItems, setMenuItems] = useState<MenuItem[]>(initialMenuItems);
   const [activeFilter, setActiveFilter] = useState<'all' | 'pending' | 'preparing' | 'ready'>('all');
@@ -35,34 +33,34 @@ export default function KitchenKDSPage() {
   });
 
   return (
-    <div className="min-h-screen pb-16 text-slate-100 font-sans">
-      <RoleSwitcherBar
-        currentRole={role}
-        onRoleChange={(r) => {
-          setRole(r);
-          if (r === 'customer') window.location.href = '/customer/menu';
-          if (r === 'manager') window.location.href = '/dashboard';
-        }}
-      />
-      <Navbar
-        user={user}
-        currentRole={role}
-        onOpenAuth={() => setIsAuthOpen(true)}
-        onLogout={() => setUser(null)}
-      />
+    <div className="min-h-screen pb-16 text-slate-100 font-sans pt-[116px] relative z-10">
+      <AuthModal />
+
+      {/* Fixed top header wrapper preventing overlapping */}
+      <div className="fixed top-0 left-0 right-0 z-50 flex flex-col shadow-2xl">
+        <RoleSwitcherBar
+          currentRole={role}
+          onRoleChange={(r) => {
+            setRole(r);
+            if (r === 'customer') window.location.href = '/customer/menu';
+            if (r === 'manager') window.location.href = '/dashboard';
+          }}
+        />
+        <Navbar />
+      </div>
 
       <main className="max-w-7xl mx-auto px-4 md:px-8 py-6">
         
         {/* Header Title Bar */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 glass-panel p-6 rounded-3xl mb-8 border border-emerald-500/20">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 glass-panel p-6 rounded-3xl mb-8 war-shimmer" style={{ border: '1px solid rgba(218,165,32,0.3)' }}>
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400">
+            <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-500">
               <ChefHat className="w-7 h-7" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-2xl md:text-3xl font-black text-white">Live Kitchen Display System (KDS)</h1>
-                <span className="bg-emerald-950 text-emerald-400 font-bold text-xs px-2 py-0.5 rounded border border-emerald-800/40">
+                <h1 className="text-2xl md:text-3xl font-black" style={{ color: '#F5E6CE', fontFamily: 'Cinzel, serif' }}>Live Kitchen Display System (KDS)</h1>
+                <span className="font-bold text-xs px-2 py-0.5 rounded" style={{ background: 'rgba(218,165,32,0.1)', color: '#DAA520', border: '1px solid rgba(218,165,32,0.3)', fontFamily: 'Cinzel, serif', fontSize: '9px' }}>
                   REAL-TIME TICKET STREAM
                 </span>
               </div>
@@ -72,16 +70,16 @@ export default function KitchenKDSPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2 bg-slate-900 p-1 rounded-xl border border-slate-800 text-xs">
+          <div className="flex items-center gap-2 p-1 rounded-xl text-xs" style={{ background: 'rgba(10,2,12,0.9)', border: '1px solid rgba(139,26,46,0.4)' }}>
             {(['all', 'pending', 'preparing', 'ready'] as const).map((filter) => (
               <button
                 key={filter}
                 onClick={() => setActiveFilter(filter)}
-                className={`px-3 py-1.5 rounded-lg font-semibold capitalize transition ${
-                  activeFilter === filter
-                    ? 'bg-emerald-500 text-slate-950 font-bold shadow'
-                    : 'text-slate-400 hover:text-white'
-                }`}
+                className="px-3 py-1.5 rounded-lg font-semibold capitalize transition"
+                style={activeFilter === filter
+                  ? { background: 'linear-gradient(135deg,#8B1A2E,#E8823A)', color: '#FFD45E', fontFamily: 'Cinzel, serif', fontSize: '10px' }
+                  : { color: '#8A7060' }
+                }
               >
                 {filter}
               </button>
@@ -239,11 +237,6 @@ export default function KitchenKDSPage() {
 
       </main>
 
-      <AuthModal
-        isOpen={isAuthOpen}
-        onClose={() => setIsAuthOpen(false)}
-        onLoginSuccess={(u) => setUser(u)}
-      />
     </div>
   );
 }
